@@ -21,7 +21,7 @@ public class UserValidateTest {
     }
 
     @Test
-    void createUserEmailNullTest(){
+    void createUserEmailNullTest() {
         User user = new User(1, "", "nnn", "nn", "1999-01-18");
 
         Assertions.assertThrowsExactly(ValidException.class, () ->  userController.createUser(user));
