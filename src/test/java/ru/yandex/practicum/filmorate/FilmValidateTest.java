@@ -35,7 +35,7 @@ public class FilmValidateTest {
     }
 
     @Test
-    void createFilmWithWrongDurationTest () {
+    void createFilmWithWrongDurationTest() {
         Film film = new Film(1, "mm", "kkkk", "2005-12-01", -5);
 
         Assertions.assertThrowsExactly(ValidException.class, () -> filmController.createFilm(film));
