@@ -59,6 +59,5 @@ public class FilmController {
                 throw new NotFoundException("Фильм не найден.");
             }
         }
-
     }
 }
