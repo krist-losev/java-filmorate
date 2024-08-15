@@ -22,6 +22,7 @@ public class FilmController {
 
     private int filmId = 1;
 
+    //добавление фильма
     @PostMapping
     public Film createFilm(@RequestBody Film film) {
         log.info("Поступил запрос на добавление фильма: " + film.getName());
@@ -31,11 +32,13 @@ public class FilmController {
         return film;
     }
 
+    //получение списка всех добавленных фильмов
     @GetMapping
     public List<Film> listFilms() {
         return new ArrayList<>(films.values());
     }
 
+    //обновление фильма
     @PutMapping
     public Film updateFilm(@RequestBody Film newFilm) {
         log.info("Пришёл запрос на обновление фильма");

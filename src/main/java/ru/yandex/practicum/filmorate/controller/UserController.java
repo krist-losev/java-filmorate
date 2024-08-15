@@ -17,10 +17,11 @@ import java.util.Map;
 @Slf4j
 public class UserController {
     private final Map<Integer, User> users = new HashMap<>();
-    public UserValidator validator = new UserValidator();
+    private UserValidator validator = new UserValidator();
 
     private int userId = 1;
 
+    //создание пользователя
     @PostMapping
     public User createUser(@RequestBody User user) {
         log.info("Пришёл запрос на создание пользователя с email: " + user.getEmail());
@@ -30,11 +31,13 @@ public class UserController {
         return user;
     }
 
+    //получение списка пользователей
     @GetMapping
     public List<User> listUsers() {
         return new ArrayList<>(users.values());
     }
 
+    //обновление пользователя
     @PutMapping
     public User updateUser(@RequestBody User newUser) {
         log.info("Пришёл запрос на обновление пользователя");
