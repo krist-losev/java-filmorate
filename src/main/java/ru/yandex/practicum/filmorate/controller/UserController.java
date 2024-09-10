@@ -1,62 +1,66 @@
 package ru.yandex.practicum.filmorate.controller;
 
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
-import ru.yandex.practicum.filmorate.exception.ConditionsNotMetException;
-import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.User;
-import ru.yandex.practicum.filmorate.validator.UserValidator;
+import ru.yandex.practicum.filmorate.service.UserService;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @RestController
 @RequestMapping("/users")
+@AllArgsConstructor
 @Slf4j
 public class UserController {
-    private final Map<Integer, User> users = new HashMap<>();
-    private UserValidator validator = new UserValidator();
 
-    private int userId = 1;
+    private UserService userService;
 
     //создание пользователя
     @PostMapping
     public User createUser(@RequestBody User user) {
-        log.info("Пришёл запрос на создание пользователя с email: " + user.getEmail());
-        validator.validate(user);
-        user.setId(userId++);
-        users.put(user.getId(), user);
-        return user;
+        return userService.createUser(user);
     }
 
     //получение списка пользователей
     @GetMapping
     public List<User> listUsers() {
-        return new ArrayList<>(users.values());
+        return userService.listUsers();
     }
 
     //обновление пользователя
     @PutMapping
     public User updateUser(@RequestBody User newUser) {
-        log.info("Пришёл запрос на обновление пользователя");
-        validator.validate(newUser);
-        if (newUser.getId() == 0) {
-            log.error("Id не может быть равен 0");
-            throw new ConditionsNotMetException("Не указан id новой пользователя.");
-        } else {
-            if (users.containsKey(newUser.getId())) {
-                User old = users.get(newUser.getId());
-                old.setEmail(newUser.getEmail());
-                old.setLogin(newUser.getLogin());
-                old.setName(newUser.getName());
-                old.setBirthday(newUser.getBirthday());
-                return old;
-            } else {
-                log.error("Пользователь с id" + newUser.getId() + " не найден.");
-                throw new NotFoundException("Пользователь не найден.");
-            }
-        }
+        return userService.updateUser(newUser);
+    }
+
+    //поиск пользователя по id
+    @GetMapping("/{postId}")
+    public Optional<User> findUserById(@PathVariable int postId) {
+        return userService.findUserById(postId);
+    }
+
+    //добавление пользователя в друзья
+    @PutMapping("/{id}/friends/{friendId}")
+    public void addFriend(@PathVariable int id, @PathVariable int friendId) {
+        userService.addFriend(id, friendId);
+    }
+
+    //удаление из друзей
+    @DeleteMapping("/{id}/friends/{friendId}")
+    public void deleteFriend(@PathVariable int id, @PathVariable int friendId) {
+        userService.deleteFriend(id, friendId);
+    }
+
+    //друзья
+    @GetMapping("/{id}/friends")
+    public List<User> getFriendsList(@PathVariable int id) {
+        return userService.getFriendsList(id);
+    }
+
+    //общие друзья
+    @GetMapping("/{id}/friends/common/{otherId}")
+    public List<User> listCommonsFriends(@PathVariable int id, @PathVariable int otherId) {
+        return userService.listCommonsFriends(id, otherId);
     }
 }
