@@ -9,8 +9,6 @@ import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.service.UserService;
 import ru.yandex.practicum.filmorate.storage.InMemoryUserStorage;
 
-import java.util.HashSet;
-
 @SpringBootTest
 public class UserValidateTest {
     UserController userController = new UserController(new UserService(new InMemoryUserStorage()));
