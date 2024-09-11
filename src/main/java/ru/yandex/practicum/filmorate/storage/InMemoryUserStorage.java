@@ -18,7 +18,6 @@ public class InMemoryUserStorage implements UserStorage {
 
     private int userId = 1;
 
-    //создание пользователя
     @Override
     public User createUser(User user) {
         log.info("Пришёл запрос на создание пользователя с email: " + user.getEmail());
@@ -29,7 +28,6 @@ public class InMemoryUserStorage implements UserStorage {
         return user;
     }
 
-    //получение списка пользователей
     @Override
     public List<User> listUsers() {
         return new ArrayList<>(users.values());
@@ -58,13 +56,12 @@ public class InMemoryUserStorage implements UserStorage {
         }
     }
 
-    //поиск пользователя по id
     @Override
     public Optional<User> findUserById(int userId) {
         log.info("Пришёл запрос на поиск пользователя");
-        return Optional.ofNullable(users.values().stream()
+        return Optional.of(users.values().stream()
                 .filter(user -> user.getId() == userId)
-                .findFirst()
-                .orElseThrow(() -> new NotFoundException("Пользователь с данным id не найден.")));
+                .findFirst())
+                .get();
     }
 }

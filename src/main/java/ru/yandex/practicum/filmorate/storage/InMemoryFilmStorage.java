@@ -60,10 +60,10 @@ public class InMemoryFilmStorage implements FilmStorage {
     //поиск фильма по id
     @Override
     public Optional<Film> findFilmById(int filmId) {
-        log.info(("Пришёл запрос на поиск фильма"));
-        return Optional.ofNullable(films.values().stream()
+        log.info("Пришёл запрос на поиск фильма");
+        return Optional.of(films.values().stream()
                 .filter(film -> film.getId() == filmId)
-                .findFirst()
-                .orElseThrow(() -> new NotFoundException("Фильм с таким id не найден.")));
+                .findFirst())
+                .get();
     }
 }
