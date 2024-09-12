@@ -1,10 +1,12 @@
 package ru.yandex.practicum.filmorate.model;
 
-import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 
+import java.util.Set;
+
 @Data
-@AllArgsConstructor
+@Builder
 public class Film {
 
     private int id;
@@ -12,5 +14,5 @@ public class Film {
     private String description;
     private String releaseDate;
     private long duration;
-
+    private Set<Integer> like;
 }

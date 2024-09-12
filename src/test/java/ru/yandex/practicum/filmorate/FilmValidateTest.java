@@ -6,15 +6,24 @@ import org.springframework.boot.test.context.SpringBootTest;
 import ru.yandex.practicum.filmorate.controller.FilmController;
 import ru.yandex.practicum.filmorate.exception.ValidException;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.service.FilmService;
+import ru.yandex.practicum.filmorate.storage.InMemoryFilmStorage;
+import ru.yandex.practicum.filmorate.storage.InMemoryUserStorage;
 
 @SpringBootTest
 public class FilmValidateTest {
 
-    FilmController filmController = new FilmController();
+    private final FilmService filmService = new FilmService(new InMemoryFilmStorage(), new InMemoryUserStorage());
+    private final FilmController filmController = new FilmController(filmService);
 
     @Test
     void createFilmTest() {
-        Film film = new Film(1, "mmm", "kkkk", "2000-12-01", 125);
+        Film film = Film.builder()
+                .name("mmm")
+                .description("kkkk")
+                .releaseDate("2000-12-01")
+                .duration(125)
+                .build();
         filmController.createFilm(film);
 
         Assertions.assertEquals(1, filmController.listFilms().size());
@@ -22,21 +31,36 @@ public class FilmValidateTest {
 
     @Test
     void createFilmWithNameNullTest() {
-        Film film = new Film(1, "", "kkkk", "2000-12-01", 125);
+        Film film = Film.builder()
+                .name("")
+                .description("kkkk")
+                .releaseDate("2000-12-01")
+                .duration(125)
+                .build();
 
         Assertions.assertThrowsExactly(ValidException.class, () -> filmController.createFilm(film));
     }
 
     @Test
     void createFilmWithWrongReleaseDateTest() {
-        Film film = new Film(1, "mm", "kkkk", "1654-12-01", 125);
+        Film film = Film.builder()
+                .name("bbb")
+                .description("kkkk")
+                .releaseDate("1654-12-01")
+                .duration(125)
+                .build();
 
         Assertions.assertThrowsExactly(ValidException.class, () -> filmController.createFilm(film));
     }
 
     @Test
     void createFilmWithWrongDurationTest() {
-        Film film = new Film(1, "mm", "kkkk", "2005-12-01", -5);
+        Film film = Film.builder()
+                .name("mmm")
+                .description("kkkk")
+                .releaseDate("2000-12-01")
+                .duration(-5)
+                .build();;
 
         Assertions.assertThrowsExactly(ValidException.class, () -> filmController.createFilm(film));
     }
