@@ -1,0 +1,35 @@
+package ru.yandex.practicum.filmorate.storage.dal.mappers;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.RowMapper;
+import org.springframework.stereotype.Component;
+import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.model.Mpa;
+import ru.yandex.practicum.filmorate.storage.dal.MpaDdStorage;
+
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
+@Component
+public class FilmRowMapper implements RowMapper<Film> {
+
+    MpaDdStorage mpaDdStorage;
+
+    @Autowired
+    public FilmRowMapper(MpaDdStorage mpaDdStorage) {
+        this.mpaDdStorage = mpaDdStorage;
+    }
+
+    @Override
+    public Film mapRow(ResultSet resultSet, int rowNum) throws SQLException {
+        Mpa mpa = mpaDdStorage.findMpaById(resultSet.getInt("mpa_id")).get();
+        return Film.builder()
+                .id(resultSet.getInt("id"))
+                .name(resultSet.getString("name"))
+                .description(resultSet.getString("description"))
+                .releaseDate(resultSet.getString("releaseDat"))
+                .duration(resultSet.getLong("duration"))
+                .mpa(mpa)
+                .build();
+    }
+}

@@ -6,6 +6,8 @@ import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.exception.ConditionsNotMetException;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.model.Genre;
+import ru.yandex.practicum.filmorate.model.Mpa;
 import ru.yandex.practicum.filmorate.validator.FilmValidator;
 
 import java.util.*;
@@ -14,6 +16,8 @@ import java.util.*;
 @Slf4j
 public class InMemoryFilmStorage implements FilmStorage {
     private final Map<Integer, Film> films = new HashMap<>();
+    private final Map<Integer, Genre> genres = new HashMap<>();
+    private final Map<Integer, Mpa> mpas = new HashMap<>();
     private final FilmValidator validator = new FilmValidator();
     private int filmId = 1;
 
@@ -66,4 +70,36 @@ public class InMemoryFilmStorage implements FilmStorage {
                 .findFirst())
                 .get();
     }
+
+    //получение списка всех жанров
+    @Override
+    public List<Genre> listGenre() {
+        return new ArrayList<>(genres.values());
+    }
+
+    //получение жанра по идентификатору
+    @Override
+    public Optional<Genre> findGenreById(int genreId) {
+        log.info("Пришёл запрос на поиск жанра");
+        return Optional.of(genres.values().stream()
+                .filter(genre -> genre.getId() == genreId)
+                .findFirst())
+                .get();
+    }
+
+    //получение списка всех вохрастных ограничений
+    @Override
+    public List<Mpa> listMpa() {
+        return new ArrayList<>(mpas.values());
+    }
+
+    //получение ограничения по идентификатору
+    @Override
+    public Optional<Mpa> findMpaById(int mpaId) {
+        return Optional.of(mpas.values().stream()
+                .filter(mpa -> mpa.getId() == mpaId)
+                .findFirst()
+                .get());
+    }
+
 }
