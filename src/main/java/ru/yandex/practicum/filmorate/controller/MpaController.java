@@ -5,7 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import ru.yandex.practicum.filmorate.model.Mpa;
+import ru.yandex.practicum.filmorate.dto.MpaDto;
 import ru.yandex.practicum.filmorate.service.MpaService;
 
 import java.util.List;
@@ -22,7 +22,7 @@ public class MpaController {
      * @return список ограничений
      */
     @GetMapping
-    public List<Mpa> getAllMpa() {
+    public List<MpaDto> getAllMpa() {
         return mpaService.listMpa();
     }
 
@@ -32,7 +32,7 @@ public class MpaController {
      * @return жанр
      */
     @GetMapping("/{id}")
-    public Mpa findMpaById(int mpaId) {
+    public MpaDto findMpaById(int mpaId) {
         return mpaService.findMpaById(mpaId);
     }
 }

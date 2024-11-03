@@ -3,7 +3,8 @@ package ru.yandex.practicum.filmorate.service;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import ru.yandex.practicum.filmorate.model.Mpa;
+import ru.yandex.practicum.filmorate.dto.MpaDto;
+import ru.yandex.practicum.filmorate.mappers.MpaMapper;
 import ru.yandex.practicum.filmorate.storage.dal.MpaDdStorage;
 
 import java.util.List;
@@ -14,11 +15,11 @@ import java.util.List;
 public class MpaService {
     MpaDdStorage mpaDdStorage;
 
-    public List<Mpa> listMpa() {
-        return mpaDdStorage.listMpa();
+    public List<MpaDto> listMpa() {
+        return mpaDdStorage.listMpa().stream().map(MpaMapper::mapToMpaDto).toList();
     }
 
-    public Mpa findMpaById(int mpaId) {
-        return mpaDdStorage.findMpaById(mpaId).get();
+    public MpaDto findMpaById(int mpaId) {
+        return mpaDdStorage.findMpaById(mpaId).map(MpaMapper::mapToMpaDto).get();
     }
 }

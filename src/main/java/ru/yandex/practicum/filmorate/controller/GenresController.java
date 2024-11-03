@@ -5,7 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import ru.yandex.practicum.filmorate.model.Genre;
+import ru.yandex.practicum.filmorate.dto.GenreDto;
 import ru.yandex.practicum.filmorate.service.GenreService;
 
 import java.util.List;
@@ -22,7 +22,7 @@ public class GenresController {
      * @return список жанров
      */
     @GetMapping
-    public List<Genre> getAllGenres() {
+    public List<GenreDto> getAllGenres() {
         return genreService.getAllGenres();
     }
 
@@ -32,7 +32,7 @@ public class GenresController {
      * @return жанр
      */
     @GetMapping("/{id}")
-    public Genre findGenreById(int genreId) {
+    public GenreDto findGenreById(int genreId) {
         return genreService.findGenreById(genreId);
     }
 }
