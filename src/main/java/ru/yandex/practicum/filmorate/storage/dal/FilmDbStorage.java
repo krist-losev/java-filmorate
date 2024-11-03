@@ -18,11 +18,11 @@ import java.util.Optional;
 public class FilmDbStorage extends BaseDdStorage<Film> implements FilmStorage {
     private static final String FIND_ALL_QUERY = "SELECT * FROM films";
     private static final String FIND_FILM_BY_ID_QUERY = "SELECT * FROM films WHERE id = ?";
-    private static final String INSERT_FILM_QUERY = "INSERT INTO films(name, description, releaseDate, duration)"
+    private static final String INSERT_FILM_QUERY = "INSERT INTO films (name, description, releaseDate, duration)"
             + " VALUES (?, ?, ?, ?)";
     private static final String UPDATE_QUERY = "UPDATE films SET name = ?, description = ?, releaseDate = ? "
         + "duration = ?, WHERE id = ?";
-    private static final String ADD_LIKE_FILM = "INSERT INTO likes(film_id, user_id) VALUES(?, ?)";
+    private static final String ADD_LIKE_FILM = "INSERT INTO likes (film_id, user_id) VALUES (?, ?)";
     private static final String DELETE_LIKE_ID = "DELETE FROM likes WHERE film_id = ? AND user_id = ?";
     private static final String FIND_MOST_POPULAR_FILM = "SELECT f.*, mpa.id AS mpa_id, mpa.name_mpa AS mpa_name," +
             " COUNT(l.user_id) AS like FROM films AS f INNER JOIN mpa ON f.mpa= mpa.id INNER JOIN likes AS l " +
@@ -80,20 +80,10 @@ public class FilmDbStorage extends BaseDdStorage<Film> implements FilmStorage {
         return findOne(FIND_FILM_BY_ID_QUERY, filmId);
     }
 
-    /**
-     * добавление лайка на фильм
-     * @param filmId
-     * @param userId
-     */
     public void addLikeFilm(int filmId, int userId) {
         update(ADD_LIKE_FILM, filmId, userId);
     }
 
-    /**
-     * удаление лайка с фильма
-     * @param filmId
-     * @param userId
-     */
     public void deletedLike(int filmId, int userId) {
         update(DELETE_LIKE_ID, filmId, userId);
     }

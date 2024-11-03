@@ -22,12 +22,12 @@ public class FilmRowMapper implements RowMapper<Film> {
 
     @Override
     public Film mapRow(ResultSet resultSet, int rowNum) throws SQLException {
-        Mpa mpa = mpaDdStorage.findMpaById(resultSet.getInt("mpa_id")).get();
+        Mpa mpa = mpaDdStorage.findMpaById(resultSet.getInt("mpa")).get();
         return Film.builder()
                 .id(resultSet.getInt("id"))
                 .name(resultSet.getString("name"))
                 .description(resultSet.getString("description"))
-                .releaseDate(resultSet.getString("releaseDat"))
+                .releaseDate(resultSet.getString("releaseDate"))
                 .duration(resultSet.getLong("duration"))
                 .mpa(mpa)
                 .build();

@@ -9,10 +9,15 @@ SELECT 4, 'R' WHERE NOT EXISTS (SELECT id FROM mpa WHERE id = 4);
 INSERT INTO mpa(id, mpa_name)
 SELECT 5, 'NC-17' WHERE NOT EXISTS (SELECT id FROM mpa WHERE id = 5);
 
-INSERT INTO genres(id, genre_name) VALUES
-(1, 'Комедия'),
-(2, 'Драма'),
-(3, 'Боевик'),
-(4, 'Мультфильм'),
-(5, 'Триллер'),
-(6, 'Документальный');
+INSERT INTO genres(id, genre_name)
+SELECT 1, 'Комедия' WHERE NOT EXISTS (SELECT id FROM genres WHERE id = 1);
+INSERT INTO genres(id, genre_name)
+SELECT 2, 'Драма' WHERE NOT EXISTS (SELECT id FROM genres WHERE id = 2);
+INSERT INTO genres(id, genre_name)
+SELECT 3, 'Боевик' WHERE NOT EXISTS (SELECT id FROM genres WHERE id = 3);
+INSERT INTO genres(id, genre_name)
+SELECT 4, 'Мультфильм' WHERE NOT EXISTS (SELECT id FROM genres WHERE id = 4);
+INSERT INTO genres(id, genre_name)
+SELECT 5, 'Триллер' WHERE NOT EXISTS (SELECT id FROM genres WHERE id = 5);
+INSERT INTO genres(id, genre_name)
+SELECT 6, 'Документальный' WHERE NOT EXISTS (SELECT id FROM genres WHERE id = 6);

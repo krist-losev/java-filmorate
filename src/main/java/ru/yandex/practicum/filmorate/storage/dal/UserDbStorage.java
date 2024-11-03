@@ -18,10 +18,10 @@ public class UserDbStorage extends BaseDdStorage<User> implements UserStorage {
 
     private static final String FIND_ALL_QUERY = "SELECT * FROM users";
     private static final String FIND_USER_BY_ID_QUERY = "SELECT * FROM users WHERE id = ?";
-    private static final String INSERT_USER_QUERY = "INSERT INTO users(email, login, name, birthday) VALUES (?, ?, ?, ?)";
+    private static final String INSERT_USER_QUERY = "INSERT INTO users (email, login, name, birthday) VALUES (?, ?, ?, ?)";
     private static final String UPDATE_QUERY = "UPDATE users SET email = ?, login = ?, name = ?, birthday = ?"
     + " WHERE id = ?";
-    private static final String ADD_FRIEND_QUERY = "INSERT INTO friends(id_user, id_friends) VALUES (?, ?)";
+    private static final String ADD_FRIEND_QUERY = "INSERT INTO friends (id_user, id_friends) VALUES (?, ?)";
     private static final String DELETE_FRIEND_ID = "DELETE FROM friends WHERE id_user = ? AND id_friend = ?";
     private static final String GET_ALL_FRIENDS = "SELECT us.* FROM friends AS fr LEFT JOIN users AS us"
     + " ON fr.id_friend = us.id WHERE fr.id_user = ?";
@@ -60,7 +60,8 @@ public class UserDbStorage extends BaseDdStorage<User> implements UserStorage {
                     newUser.getEmail(),
                     newUser.getLogin(),
                     newUser.getName(),
-                    newUser.getBirthday());
+                    newUser.getBirthday(),
+                    newUser.getId());
         } else {
             throw new NotFoundException("Пользователь не найден.");
         }

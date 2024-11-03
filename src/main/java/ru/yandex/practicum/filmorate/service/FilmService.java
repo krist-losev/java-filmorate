@@ -3,13 +3,16 @@ package ru.yandex.practicum.filmorate.service;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import ru.yandex.practicum.filmorate.dto.FilmDto;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
+import ru.yandex.practicum.filmorate.mappers.FilmMapper;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.storage.dal.FilmDbStorage;
 import ru.yandex.practicum.filmorate.storage.dal.UserDbStorage;
 
 import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @AllArgsConstructor
@@ -32,23 +35,27 @@ public class FilmService {
         log.info("У фильма " + filmId + " удалён лайк пользователя " + userId);
     }
 
-    public List<Film> mostPopularFilm(int count) {
-        return filmDbStorage.popularFilm(count);
+    public List<FilmDto> mostPopularFilm(int count) {
+        return filmDbStorage.popularFilm(count).stream().map(FilmMapper::mapToFilmDto).toList();
     }
 
-    public Film createFilm(Film film) {
-        return filmDbStorage.createFilm(film);
+    public FilmDto createFilm(Film film) {
+        Optional<Film> newFilm = Optional.of(filmDbStorage.createFilm(film));
+        return newFilm.map(FilmMapper::mapToFilmDto).get();
     }
 
-    public List<Film> listFilms() {
-        return filmDbStorage.listFilms();
+    public List<FilmDto> listFilms() {
+        return filmDbStorage.listFilms().stream().map(FilmMapper::mapToFilmDto).toList();
     }
 
-    public Film updateFilm(Film newFilm) {
-        return filmDbStorage.updateFilm(newFilm);
+    public FilmDto updateFilm(Film newFilm) {
+        Optional<Film> film = Optional.of(filmDbStorage.updateFilm(newFilm));
+        return film.map(FilmMapper::mapToFilmDto).get();
     }
 
-    public Film findFilmById(int id) {
-        return filmDbStorage.findFilmById(id).orElseThrow(() -> new NotFoundException("Фильм с таким id не найден."));
+    public FilmDto findFilmById(int id) {
+        return filmDbStorage.findFilmById(id)
+                .map(FilmMapper::mapToFilmDto)
+                .orElseThrow(() -> new NotFoundException("Фильм с таким id не найден."));
     }
 }

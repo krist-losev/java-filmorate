@@ -3,6 +3,7 @@ package ru.yandex.practicum.filmorate.controller;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import ru.yandex.practicum.filmorate.dto.UserDto;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.service.UserService;
 
@@ -26,7 +27,7 @@ public class UserController {
      * @return - созданный пользователь
      */
     @PostMapping
-    public User createUser(@RequestBody User user) {
+    public UserDto createUser(@RequestBody User user) {
         return userService.createUser(user);
     }
 
@@ -35,7 +36,7 @@ public class UserController {
      * @return список всех созданных пользователей
      */
     @GetMapping
-    public List<User> listUsers() {
+    public List<UserDto> listUsers() {
         return userService.listUsers();
     }
 
@@ -46,7 +47,7 @@ public class UserController {
      * @throws ru.yandex.practicum.filmorate.exception.NotFoundException при отсутствии данного пользователя
      */
     @PutMapping
-    public User updateUser(@RequestBody User newUser) {
+    public UserDto updateUser(@RequestBody User newUser) {
         return userService.updateUser(newUser);
     }
 
@@ -57,7 +58,7 @@ public class UserController {
      * @throws ru.yandex.practicum.filmorate.exception.NotFoundException при отсутствии данного пользователя
      */
     @GetMapping("/{postId}")
-    public User findUserById(@PathVariable int postId) {
+    public UserDto findUserById(@PathVariable int postId) {
         return userService.findUserById(postId);
     }
 
@@ -89,7 +90,7 @@ public class UserController {
      * @throws ru.yandex.practicum.filmorate.exception.ConditionsNotMetException при пустом списке друзей пользователя
      */
     @GetMapping("/{id}/friends")
-    public List<User> getFriendsList(@PathVariable int id) {
+    public List<UserDto> getFriendsList(@PathVariable int id) {
         return userService.getFriendsList(id);
     }
 
@@ -100,7 +101,7 @@ public class UserController {
      * @return список общих друзей переданных пользователей
      */
     @GetMapping("/{id}/friends/common/{otherId}")
-    public List<User> listCommonsFriends(@PathVariable int id, @PathVariable int otherId) {
+    public List<UserDto> listCommonsFriends(@PathVariable int id, @PathVariable int otherId) {
         return userService.listCommonsFriends(id, otherId);
     }
 

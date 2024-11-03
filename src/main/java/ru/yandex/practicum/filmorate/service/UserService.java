@@ -3,8 +3,10 @@ package ru.yandex.practicum.filmorate.service;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import ru.yandex.practicum.filmorate.dto.UserDto;
 import ru.yandex.practicum.filmorate.exception.ConditionsNotMetException;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
+import ru.yandex.practicum.filmorate.mappers.UserMapper;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.dal.UserDbStorage;
 
@@ -41,21 +43,21 @@ public class UserService {
         userDbStorage.deletedFriend(userId, friendId);
     }
 
-    public List<User> getFriendsList(int userId) {
+    public List<UserDto> getFriendsList(int userId) {
         User user = userDbStorage.findUserById(userId).orElseThrow(() ->
                 new NotFoundException(("Пользователь с данным id найден.")));
         if (user.getFriends() == null) {
             throw new ConditionsNotMetException("Список друзей пользователя с id " + userId + " пуст.");
         }
-        return userDbStorage.friendsList(userId);
+        return userDbStorage.friendsList(userId).stream().map(UserMapper::mapToUserDto).toList();
     }
 
-    public List<User> listCommonsFriends(int userId, int otherId) {
+    public List<UserDto> listCommonsFriends(int userId, int otherId) {
         User user = userDbStorage.findUserById(userId).orElseThrow(() ->
                 new NotFoundException(("Пользователь с данным id найден.")));
         User other = userDbStorage.findUserById(otherId).orElseThrow(() ->
                 new NotFoundException(("Пользователь с данным id найден.")));
-        return userDbStorage.commonFriendsList(userId, otherId);
+        return userDbStorage.commonFriendsList(userId, otherId).stream().map(UserMapper::mapToUserDto).toList();
     }
 
     public void getFriendById(int userId, int friendId) {
@@ -69,20 +71,25 @@ public class UserService {
         log.info("Пользователь {} получил информацию о друге-пользователе {}", user.getName(), friend.getName());
     }
 
-    public User createUser(User user) {
-        return userDbStorage.createUser(user);
+    public UserDto createUser(User user) {
+        Optional<User> newUser = Optional.of(userDbStorage.createUser(user));
+        return newUser.map(UserMapper::mapToUserDto).get();
     }
 
-    public List<User> listUsers() {
-        return userDbStorage.listUsers();
+    public List<UserDto> listUsers() {
+        return userDbStorage.listUsers().stream().map(UserMapper::mapToUserDto).toList();
     }
 
-    public User updateUser(User newUser) {
-        return userDbStorage.updateUser(newUser);
+    public UserDto updateUser(User newUser) {
+        if (newUser.getId() == 0) {
+            throw new RuntimeException("Id олжен быть указан");
+        }
+        Optional<User> user = Optional.of(userDbStorage.updateUser(newUser));
+        return user.map(UserMapper::mapToUserDto).get();
     }
 
-    public User findUserById(int userId) {
-        return userDbStorage.findUserById(userId)
+    public UserDto findUserById(int userId) {
+        return userDbStorage.findUserById(userId).map(UserMapper::mapToUserDto)
                 .orElseThrow(() -> new NotFoundException(("Пользователь с данным id найден.")));
     }
 }
