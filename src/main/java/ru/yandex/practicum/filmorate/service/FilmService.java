@@ -3,16 +3,16 @@ package ru.yandex.practicum.filmorate.service;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import ru.yandex.practicum.filmorate.dto.FilmDto;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
-import ru.yandex.practicum.filmorate.mappers.FilmMapper;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.model.Genre;
+import ru.yandex.practicum.filmorate.model.Mpa;
 import ru.yandex.practicum.filmorate.storage.dal.FilmDbStorage;
+import ru.yandex.practicum.filmorate.storage.dal.GenreDdStorage;
+import ru.yandex.practicum.filmorate.storage.dal.MpaDdStorage;
 import ru.yandex.practicum.filmorate.storage.dal.UserDbStorage;
 
-import java.util.Comparator;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @AllArgsConstructor
@@ -21,41 +21,70 @@ public class FilmService {
 
     private FilmDbStorage filmDbStorage;
     private UserDbStorage userDbStorage;
-    private static final Comparator<Film> LIKES_FILM = Comparator.comparing(film -> film.getLike().size(), Comparator.reverseOrder());
+    private final GenreDdStorage genreDdStorage;
+    private final MpaDdStorage mpaDdStorage;
 
-    public void addLike(int filmId, int userId) {
+    public void addLike(long filmId, long userId) {
         userDbStorage.findUserById(userId).orElseThrow(() -> new NotFoundException("Пользователь не найден."));
         filmDbStorage.addLikeFilm(filmId, userId);
         log.info("Фильму " + filmId + " добавлен лайк пользователя " + userId);
     }
 
-    public void deleteLike(int filmId, int userId) {
+    public void deleteLike(long filmId, long userId) {
         userDbStorage.findUserById(userId).orElseThrow(() -> new NotFoundException("Пользователь не найден."));
         filmDbStorage.deletedLike(filmId, userId);
         log.info("У фильма " + filmId + " удалён лайк пользователя " + userId);
     }
 
-    public List<FilmDto> mostPopularFilm(int count) {
-        return filmDbStorage.popularFilm(count).stream().map(FilmMapper::mapToFilmDto).toList();
+    public List<Film> mostPopularFilm(int count) {
+        return filmDbStorage.mostPopularFilms(count);
     }
 
-    public FilmDto createFilm(Film film) {
-        Optional<Film> newFilm = Optional.of(filmDbStorage.createFilm(film));
-        return newFilm.map(FilmMapper::mapToFilmDto).get();
+    public Film createFilm(Film film) {
+        Film newFilm = filmDbStorage.createFilm(film);
+        if (!newFilm.getGenres().isEmpty()) {
+            createGenre(film);
+        }
+        List<Integer> mpaList = mpaDdStorage.listMpa().stream()
+                .map(Mpa::getId)
+                .toList();
+        if (film.getMpa() != null) {
+            if (!mpaList.contains(film.getMpa().getId())) {
+                throw new NotFoundException("Данный MPA не существует");
+            }
+        }
+        return newFilm;
     }
 
-    public List<FilmDto> listFilms() {
-        return filmDbStorage.listFilms().stream().map(FilmMapper::mapToFilmDto).toList();
+    public List<Film> listFilms() {
+        return filmDbStorage.listFilms();
     }
 
-    public FilmDto updateFilm(Film newFilm) {
-        Optional<Film> film = Optional.of(filmDbStorage.updateFilm(newFilm));
-        return film.map(FilmMapper::mapToFilmDto).get();
+    public Film updateFilm(Film newFilm) {
+        findFilmById(newFilm.getId());
+        Film film = filmDbStorage.updateFilm(newFilm);
+        if (!film.getGenres().isEmpty()) {
+            genreDdStorage.deletedGenreFilm(newFilm.getId());
+            createGenre(newFilm);
+        }
+        return film;
     }
 
-    public FilmDto findFilmById(int id) {
+    public Film findFilmById(long id) {
         return filmDbStorage.findFilmById(id)
-                .map(FilmMapper::mapToFilmDto)
                 .orElseThrow(() -> new NotFoundException("Фильм с таким id не найден."));
+    }
+
+    private void createGenre(Film film) {
+        List<Integer> genres = genreDdStorage.listGenres().stream().map(Genre::getId).toList();
+        List<Integer> filmGenre = film.getGenres().stream().map(Genre::getId).toList();
+        if (!genres.containsAll(filmGenre)) {
+            throw new NotFoundException("Жанр не найден");
+        }
+        for (Integer idGenre : genres) {
+            if (filmGenre.contains(idGenre)) {
+                genreDdStorage.addGenreToFilm(film.getId(), idGenre);
+            }
+        }
     }
 }

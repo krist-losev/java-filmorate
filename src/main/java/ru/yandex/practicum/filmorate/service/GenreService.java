@@ -3,8 +3,8 @@ package ru.yandex.practicum.filmorate.service;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import ru.yandex.practicum.filmorate.dto.GenreDto;
-import ru.yandex.practicum.filmorate.mappers.GenreMapper;
+import ru.yandex.practicum.filmorate.exception.NotFoundException;
+import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.storage.dal.GenreDdStorage;
 
 import java.util.List;
@@ -16,12 +16,13 @@ public class GenreService {
 
     private GenreDdStorage genreDdStorage;
 
-    public List<GenreDto> getAllGenres() {
-        return genreDdStorage.listGenres().stream().map(GenreMapper::mapToGenreDto).toList();
+    public List<Genre> getAllGenres() {
+        return genreDdStorage.listGenres();
     }
 
-    public GenreDto findGenreById(int genreId) {
-        return genreDdStorage.findGenreById(genreId).map(GenreMapper::mapToGenreDto).get();
+    public Genre findGenreById(long genreId) {
+        return genreDdStorage.findGenreById(genreId).orElseThrow(() ->
+                new NotFoundException(("Пользователь с данным id найден.")));
     }
 
 }

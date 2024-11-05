@@ -3,7 +3,6 @@ package ru.yandex.practicum.filmorate.controller;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import ru.yandex.practicum.filmorate.dto.UserDto;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.service.UserService;
 
@@ -20,14 +19,13 @@ public class UserController {
         this.userService = userService;
     }
 
-
     /**
      * создание пользователя
      * @param user - пользователь, которого необхдимо создать
      * @return - созданный пользователь
      */
     @PostMapping
-    public UserDto createUser(@RequestBody User user) {
+    public User createUser(@RequestBody User user) {
         return userService.createUser(user);
     }
 
@@ -36,7 +34,7 @@ public class UserController {
      * @return список всех созданных пользователей
      */
     @GetMapping
-    public List<UserDto> listUsers() {
+    public List<User> listUsers() {
         return userService.listUsers();
     }
 
@@ -47,7 +45,7 @@ public class UserController {
      * @throws ru.yandex.practicum.filmorate.exception.NotFoundException при отсутствии данного пользователя
      */
     @PutMapping
-    public UserDto updateUser(@RequestBody User newUser) {
+    public User updateUser(@RequestBody User newUser) {
         return userService.updateUser(newUser);
     }
 
@@ -58,7 +56,7 @@ public class UserController {
      * @throws ru.yandex.practicum.filmorate.exception.NotFoundException при отсутствии данного пользователя
      */
     @GetMapping("/{postId}")
-    public UserDto findUserById(@PathVariable int postId) {
+    public User findUserById(@PathVariable long postId) {
         return userService.findUserById(postId);
     }
 
@@ -68,7 +66,7 @@ public class UserController {
      * @param friendId - идентификтаор пользователя, который добавляется в друзья
      */
     @PutMapping("/{id}/friends/{friendId}")
-    public void addFriend(@PathVariable int id, @PathVariable int friendId) {
+    public void addFriend(@PathVariable long id, @PathVariable long friendId) {
         userService.addFriend(id, friendId);
     }
 
@@ -79,7 +77,7 @@ public class UserController {
      * @throws ru.yandex.practicum.filmorate.exception.ConditionsNotMetException если список друзей пользователей пуст
      */
     @DeleteMapping("/{id}/friends/{friendId}")
-    public void deleteFriend(@PathVariable int id, @PathVariable int friendId) {
+    public void deleteFriend(@PathVariable long id, @PathVariable long friendId) {
         userService.deleteFriend(id, friendId);
     }
 
@@ -90,7 +88,7 @@ public class UserController {
      * @throws ru.yandex.practicum.filmorate.exception.ConditionsNotMetException при пустом списке друзей пользователя
      */
     @GetMapping("/{id}/friends")
-    public List<UserDto> getFriendsList(@PathVariable int id) {
+    public List<User> getFriendsList(@PathVariable long id) {
         return userService.getFriendsList(id);
     }
 
@@ -101,12 +99,7 @@ public class UserController {
      * @return список общих друзей переданных пользователей
      */
     @GetMapping("/{id}/friends/common/{otherId}")
-    public List<UserDto> listCommonsFriends(@PathVariable int id, @PathVariable int otherId) {
+    public List<User> listCommonsFriends(@PathVariable long id, @PathVariable long otherId) {
         return userService.listCommonsFriends(id, otherId);
-    }
-
-    @GetMapping("/{id}/friends/{friendId}")
-    public void getFriendById(@PathVariable int userId, @PathVariable int friendId) {
-        userService.getFriendById(userId, friendId);
     }
 }

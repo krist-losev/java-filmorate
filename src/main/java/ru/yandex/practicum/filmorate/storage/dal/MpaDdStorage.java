@@ -24,7 +24,7 @@ public class MpaDdStorage extends BaseDdStorage<Mpa> {
         return findMany(FIND_ALL_QUERY);
     }
 
-    public Optional<Mpa> findMpaById(int mpaId) {
+    public Optional<Mpa> findMpaById(long mpaId) {
         return findOne(FIND_MPA_BY_ID_QUERY, mpaId);
     }
 }

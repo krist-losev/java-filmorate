@@ -10,6 +10,7 @@ import ru.yandex.practicum.filmorate.exception.ConditionsNotMetException;
 import java.sql.PreparedStatement;
 import java.sql.Statement;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @RequiredArgsConstructor
@@ -33,6 +34,12 @@ public class BaseDdStorage<T> {
         return jdbc.query(query, mapper, params);
     }
 
+    //удаление
+    protected boolean delete(String query, Object... params) {
+        int rowsDeleted = jdbc.update(query, params);
+        return rowsDeleted > 0;
+    }
+
     //обновление
     protected void update(String query, Object... params) {
         int rowsUpdated = jdbc.update(query, params);
@@ -50,8 +57,7 @@ public class BaseDdStorage<T> {
             for (int idx = 0; idx < params.length; idx++) {
                 ps.setObject(idx + 1, params[idx]);
             }
-            return ps;
-            }, keyHolder);
+            return ps; }, keyHolder);
 
         Long id = keyHolder.getKeyAs(Long.class);
 
@@ -59,6 +65,21 @@ public class BaseDdStorage<T> {
         if (id != null) {
             return id;
         } else {
+            throw new RuntimeException("Не удалось сохранить данные");
+        }
+    }
+
+    protected void insertKeys(String query, Object... params) {
+        GeneratedKeyHolder keyHolder = new GeneratedKeyHolder();
+        jdbc.update(connection -> {
+            PreparedStatement ps = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
+            for (int idx = 0; idx < params.length; idx++) {
+                ps.setObject(idx + 1, params[idx]);
+            }
+            return ps;
+        }, keyHolder);
+        List<Map<String, Object>> keys = keyHolder.getKeyList();
+        if (keys.isEmpty()) {
             throw new RuntimeException("Не удалось сохранить данные");
         }
     }

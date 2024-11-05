@@ -3,7 +3,6 @@ package ru.yandex.practicum.filmorate.controller;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import ru.yandex.practicum.filmorate.dto.FilmDto;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.service.FilmService;
 import java.util.List;
@@ -26,7 +25,7 @@ public class FilmController {
      * @return объект класса Film
      */
     @PostMapping
-    public FilmDto createFilm(@RequestBody Film film) {
+    public Film createFilm(@RequestBody Film film) {
         return filmService.createFilm(film);
     }
 
@@ -35,7 +34,7 @@ public class FilmController {
      * @return список всех фильмов
      */
     @GetMapping
-    public List<FilmDto> listFilms() {
+    public List<Film> listFilms() {
         return filmService.listFilms();
     }
 
@@ -47,7 +46,7 @@ public class FilmController {
      * @throws ru.yandex.practicum.filmorate.exception.ConditionsNotMetException если не указан идентификатор фильма
      */
     @PutMapping
-    public FilmDto updateFilm(@RequestBody Film newFilm) {
+    public Film updateFilm(@RequestBody Film newFilm) {
         return filmService.updateFilm(newFilm);
     }
 
@@ -58,7 +57,7 @@ public class FilmController {
      * @throws ru.yandex.practicum.filmorate.exception.NotFoundException при отсуствии данного фильма
      */
     @GetMapping("/{id}")
-    public FilmDto findFilmById(@PathVariable int id) {
+    public Film findFilmById(@PathVariable long id) {
         return filmService.findFilmById(id);
     }
 
@@ -69,7 +68,7 @@ public class FilmController {
      * @throws ru.yandex.practicum.filmorate.exception.NotFoundException если фильм или пользователь не найдены
      */
     @PutMapping("/{id}/like/{userId}")
-    public void addLike(@PathVariable int id, @PathVariable int userId) {
+    public void addLike(@PathVariable long id, @PathVariable long userId) {
         filmService.addLike(id, userId);
     }
 
@@ -80,7 +79,7 @@ public class FilmController {
      * @throws ru.yandex.practicum.filmorate.exception.NotFoundException если фильм или пользователь не найдены
      */
     @DeleteMapping("{id}/like/{userId}")
-    public void deleteLike(@PathVariable int id, @PathVariable int userId) {
+    public void deleteLike(@PathVariable long id, @PathVariable long userId) {
         filmService.deleteLike(id, userId);
     }
 
@@ -90,7 +89,7 @@ public class FilmController {
      * @return список популярных фильмов
      */
     @GetMapping("/popular")
-    public List<FilmDto> mostPopularFilm(@RequestParam(defaultValue = "10") int count) {
+    public List<Film> mostPopularFilm(@RequestParam(defaultValue = "10") int count) {
         return filmService.mostPopularFilm(count);
     }
 }
