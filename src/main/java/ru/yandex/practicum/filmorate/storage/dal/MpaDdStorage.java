@@ -13,7 +13,7 @@ import java.util.Optional;
 public class MpaDdStorage extends BaseDdStorage<Mpa> {
 
     private static final String FIND_ALL_QUERY = "SELECT * FROM mpa";
-    private static final String FIND_MPA_BY_ID_QUERY = "SELECT * FROM mpa WHERE id = ?";
+    private static final String FIND_MPA_BY_ID_QUERY = "SELECT * FROM mpa WHERE id_mpa = ?";
 
     @Autowired
     public MpaDdStorage(JdbcTemplate jdbc, RowMapper<Mpa> mapper) {

@@ -2,6 +2,7 @@ package ru.yandex.practicum.filmorate.service;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.Mpa;
 import ru.yandex.practicum.filmorate.storage.dal.MpaDdStorage;
 
@@ -21,6 +22,7 @@ public class MpaService {
     }
 
     public Mpa findMpaById(int mpaId) {
-            return mpaDdStorage.findMpaById(mpaId).get();
+            return mpaDdStorage.findMpaById(mpaId).orElseThrow(() ->
+                    new NotFoundException("Ограничение не найдено"));
     }
 }
