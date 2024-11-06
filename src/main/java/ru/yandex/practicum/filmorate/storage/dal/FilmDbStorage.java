@@ -25,18 +25,9 @@ public class FilmDbStorage extends BaseDdStorage<Film> implements FilmStorage {
         + "duration = ?, mpa_id = ? WHERE id = ?";
     private static final String ADD_LIKE_FILM = "INSERT INTO likes (film_id, user_id) VALUES (?, ?)";
     private static final String DELETE_LIKE_ID = "DELETE FROM likes WHERE film_id = ? AND user_id = ?";
-    private static final String MOST_POPULAR_FILM = "SELECT f.id, f.name, f.description, f.releaseDate, f.duration, " +
-            "f.mpa_id, m.mpa_name, " +
-            "g.genre_name, " +
-            "COUNT(DISTINCT l.user_id) AS like_count " +
-            "FROM films AS f " +
-            "LEFT JOIN film_genre AS fg ON f.id = fg.film_id " +
-            "LEFT JOIN genres AS g ON fg.genre_id = g.id " +
-            "LEFT JOIN mpa AS m ON f.mpa_id = m.id_mpa " +
-            "LEFT JOIN likes AS l ON f.id = l.film_id " +
-            "GROUP BY f.id " +
-            "ORDER BY like_count DESC " +
-            "LIMIT ?";
+    private static final String MOST_POPULAR_FILM = "SELECT * FROM films AS f LEFT JOIN mpa AS m " +
+            "ON f.mpa_id = m.id_mpa LEFT JOIN (SELECT film_id, COUNT(user_id) AS like_count FROM likes " +
+            "GROUP BY film_id) fl ON f.film_id = fl.film_id ORDER BY like_count DESC LIMIT ?";
     FilmValidator validator = new FilmValidator();
     GenreDdStorage genreDdStorage;
 
@@ -106,8 +97,7 @@ public class FilmDbStorage extends BaseDdStorage<Film> implements FilmStorage {
     }
 
     public List<Film> mostPopularFilms(int count) {
-        List<Film> popularFilms = findMany(MOST_POPULAR_FILM, count);
-        return popularFilms;
+        return findMany(MOST_POPULAR_FILM, count);
     }
 }
 
