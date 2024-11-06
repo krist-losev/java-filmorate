@@ -1,9 +1,9 @@
 package ru.yandex.practicum.filmorate.service;
 
-import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
+import ru.yandex.practicum.filmorate.exception.ValidException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.model.Mpa;
@@ -15,14 +15,21 @@ import ru.yandex.practicum.filmorate.storage.dal.UserDbStorage;
 import java.util.List;
 
 @Service
-@AllArgsConstructor
 @Slf4j
 public class FilmService {
 
-    private FilmDbStorage filmDbStorage;
-    private UserDbStorage userDbStorage;
+    private final FilmDbStorage filmDbStorage;
+    private final UserDbStorage userDbStorage;
     private final GenreDdStorage genreDdStorage;
     private final MpaDdStorage mpaDdStorage;
+
+    public FilmService(FilmDbStorage filmDbStorage, UserDbStorage userDbStorage,
+                       GenreDdStorage genreDdStorage, MpaDdStorage mpaDdStorage) {
+        this.filmDbStorage = filmDbStorage;
+        this.userDbStorage = userDbStorage;
+        this.genreDdStorage = genreDdStorage;
+        this.mpaDdStorage = mpaDdStorage;
+    }
 
     public void addLike(long filmId, long userId) {
         userDbStorage.findUserById(userId).orElseThrow(() -> new NotFoundException("Пользователь не найден."));
@@ -50,7 +57,7 @@ public class FilmService {
                 .toList();
         if (film.getMpa() != null) {
             if (!mpaList.contains(film.getMpa().getId())) {
-                throw new NotFoundException("Данный MPA не существует");
+                throw new ValidException("Данный MPA не существует");
             }
         }
         return newFilm;
@@ -79,7 +86,7 @@ public class FilmService {
         List<Integer> genres = genreDdStorage.listGenres().stream().map(Genre::getId).toList();
         List<Integer> filmGenre = film.getGenres().stream().map(Genre::getId).toList();
         if (!genres.containsAll(filmGenre)) {
-            throw new NotFoundException("Жанр не найден");
+            throw new ValidException("Жанр не найден");
         }
         for (Integer idGenre : genres) {
             if (filmGenre.contains(idGenre)) {

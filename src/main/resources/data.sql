@@ -1,13 +1,11 @@
-INSERT INTO mpa(id, mpa_name)
-SELECT 1, 'G' WHERE NOT EXISTS (SELECT id FROM mpa WHERE id = 1);
-INSERT INTO mpa(id, mpa_name)
-SELECT 2, 'PG' WHERE NOT EXISTS (SELECT id FROM mpa WHERE id = 2);
-INSERT INTO mpa(id, mpa_name)
-SELECT 3, 'PG-13' WHERE NOT EXISTS (SELECT id FROM mpa WHERE id = 3);
-INSERT INTO mpa(id, mpa_name)
-SELECT 4, 'R' WHERE NOT EXISTS (SELECT id FROM mpa WHERE id = 4);
-INSERT INTO mpa(id, mpa_name)
-SELECT 5, 'NC-17' WHERE NOT EXISTS (SELECT id FROM mpa WHERE id = 5);
+BEGIN;
+INSERT INTO mpa (mpa_name)
+VALUES ('G'),
+       ('PG'),
+       ('PG-13'),
+       ('R'),
+       ('NC-17');
+COMMIT;
 
 INSERT INTO genres(id, genre_name)
 SELECT 1, 'Комедия' WHERE NOT EXISTS (SELECT id FROM genres WHERE id = 1);

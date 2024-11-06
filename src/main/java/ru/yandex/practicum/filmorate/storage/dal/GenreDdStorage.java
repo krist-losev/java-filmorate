@@ -33,11 +33,11 @@ public class GenreDdStorage extends BaseDdStorage<Genre> {
         return findMany(FIND_ALL_QUERY);
     }
 
-    public Optional<Genre> findGenreById(long genreId) {
+    public Optional<Genre> findGenreById(int genreId) {
         return findOne(FIND_GENRE_BY_ID_QUERY, genreId);
     }
 
-    public void addGenreToFilm(long filmId, long genreId) {
+    public void addGenreToFilm(long filmId, int genreId) {
         insertKeys(ADD_GENRE_FILM, filmId, genreId);
     }
 
@@ -45,7 +45,7 @@ public class GenreDdStorage extends BaseDdStorage<Genre> {
         return new HashSet<>(findMany(FIND_ALL_GENRES_FILM, filmId));
     }
 
-    public boolean deletedGenreFilm(Long idFilm) {
-        return delete(DELETED_GENRE_TO_FILM, idFilm);
+    public void deletedGenreFilm(long idFilm) {
+        delete(DELETED_GENRE_TO_FILM, idFilm);
     }
 }

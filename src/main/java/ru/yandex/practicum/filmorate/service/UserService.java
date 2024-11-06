@@ -1,6 +1,5 @@
 package ru.yandex.practicum.filmorate.service;
 
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
@@ -11,25 +10,33 @@ import ru.yandex.practicum.filmorate.storage.dal.UserDbStorage;
 import java.util.*;
 
 @Service
-@RequiredArgsConstructor
 @Slf4j
 public class UserService {
 
     private final UserDbStorage userDbStorage;
     private final FriendsDdStorage friendsDdStorage;
 
+    public UserService(UserDbStorage userDbStorage, FriendsDdStorage friendsDdStorage) {
+        this.userDbStorage = userDbStorage;
+        this.friendsDdStorage = friendsDdStorage;
+    }
+
     public void addFriend(long userId, long friendId) {
         log.info("Поступил запрос на добавление юзера с id " + friendId + " в друзья.");
         userDbStorage.findUserById(userId).orElseThrow(() ->
-                new NotFoundException(("Пользователь с данным id найден.")));
+                new NotFoundException(("Пользователь с данным id не найден.")));
         userDbStorage.findUserById(friendId).orElseThrow(() ->
-                new NotFoundException(("Пользователь с данным id найден.")));
+                new NotFoundException(("Пользователь с данным id не найден.")));
         friendsDdStorage.addFriend(userId, friendId);
         log.info("Пользователь с id {} добавлен в друзья пользователя {}", userId, friendId);
     }
 
     public void deleteFriend(long userId, long friendId) {
         log.info("Поступил запрос на удаление пользователя из списка друзей");
+        userDbStorage.findUserById(userId).orElseThrow(() ->
+                new NotFoundException(("Пользователь с данным id не найден.")));
+        userDbStorage.findUserById(friendId).orElseThrow(() ->
+                new NotFoundException(("Пользователь с данным id не найден.")));
         List<User> friends = getFriendsList(userId);
         if (friends.contains(userDbStorage.findUserById(friendId).get())) {
             friendsDdStorage.deletedFriend(userId, friendId);
@@ -38,16 +45,16 @@ public class UserService {
 
     public List<User> getFriendsList(long userId) {
         userDbStorage.findUserById(userId).orElseThrow(() ->
-                new NotFoundException(("Пользователь с данным id найден.")));
+                new NotFoundException(("Пользователь с данным id не найден.")));
         return friendsDdStorage.friendsList(userId);
 
     }
 
     public List<User> listCommonsFriends(long userId, long otherId) {
         userDbStorage.findUserById(userId).orElseThrow(() ->
-                new NotFoundException(("Пользователь с данным id найден.")));
+                new NotFoundException(("Пользователь с данным id не найден.")));
         userDbStorage.findUserById(otherId).orElseThrow(() ->
-                new NotFoundException(("Пользователь с данным id найден.")));
+                new NotFoundException(("Пользователь с данным id не найден.")));
         List<User> common = friendsDdStorage.commonFriendsList(userId, otherId);
         if (!common.isEmpty()) {
             return common;
@@ -76,6 +83,6 @@ public class UserService {
 
     public User findUserById(long userId) {
         return userDbStorage.findUserById(userId).orElseThrow(() ->
-                new NotFoundException(("Пользователь с данным id найден.")));
+                new NotFoundException(("Пользователь с данным id не найден.")));
     }
 }

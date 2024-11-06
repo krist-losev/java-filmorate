@@ -19,7 +19,7 @@ public class UserDbStorage extends BaseDdStorage<User> implements UserStorage {
     private static final String FIND_ALL_USERS = "SELECT * FROM users";
     private static final String FIND_USER_BY_ID_QUERY = "SELECT * FROM users WHERE id = ?";
     private static final String INSERT_USER_QUERY = "INSERT INTO users (login, name, email, birthday)"
-            + "VALUES (?, ?, ?, ?)";
+            + " VALUES (?, ?, ?, ?)";
     private static final String UPDATE_QUERY = "UPDATE users SET login = ?, name = ?, email = ?, birthday = ?"
             + " WHERE id = ?";
 

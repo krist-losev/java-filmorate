@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.service.GenreService;
 
@@ -32,7 +33,11 @@ public class GenresController {
      * @return жанр
      */
     @GetMapping("/{id}")
-    public Genre findGenreById(long genreId) {
-        return genreService.findGenreById(genreId);
+    public Genre findGenreById(Integer genreId) {
+        if (genreId != null) {
+            return genreService.findGenreById(genreId);
+        } else {
+            throw new NotFoundException("Ограничение не передано");
+        }
     }
 }

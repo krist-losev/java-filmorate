@@ -13,17 +13,13 @@ public class FilmRowMapper implements RowMapper<Film> {
 
     @Override
     public Film mapRow(ResultSet resultSet, int rowNum) throws SQLException {
-        Mpa mpa = Mpa.builder()
-                .id(resultSet.getInt("id"))
-                .name(resultSet.getString("name"))
-                .build();
         return Film.builder()
                 .id(resultSet.getLong("id"))
                 .name(resultSet.getString("name"))
                 .description(resultSet.getString("description"))
                 .releaseDate(resultSet.getString("releaseDate"))
                 .duration(resultSet.getInt("duration"))
-                .mpa(mpa)
+                .mpa(new Mpa(resultSet.getInt("id"), resultSet.getString("mpa_name")))
                 .build();
     }
 }

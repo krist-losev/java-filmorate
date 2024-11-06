@@ -12,11 +12,11 @@ public class FriendsDdStorage extends BaseDdStorage<User> {
 
     private static final String ADD_FRIEND_QUERY = "INSERT INTO friends (id_user, id_friend) VALUES (?, ?)";
     private static final String DELETE_FRIEND_ID = "DELETE FROM friends WHERE id_user = ? AND id_friend = ?";
-    private static final String GET_ALL_FRIENDS = "SELECT * FROM users WHERE id IN (SELECT id_friend FROM friends "
-            + "WHERE id_user = ?";
+    private static final String GET_ALL_FRIENDS = "SELECT * FROM users WHERE id IN (SELECT id_friend FROM friends"
+            + " WHERE id_user = ?)";
     private static final String GET_ALL_COMMON_FRIENDS = "SELECT * FROM users WHERE id IN " +
             "(SELECT id_friend FROM friends WHERE id_user = ?) AND id IN " +
-            "(SELECT id_friend FROM friendship WHERE id_user = ?)";
+            "(SELECT id_friend FROM friends WHERE id_user = ?)";
 
     public FriendsDdStorage(JdbcTemplate jdbc, RowMapper<User> mapper) {
         super(jdbc, mapper);

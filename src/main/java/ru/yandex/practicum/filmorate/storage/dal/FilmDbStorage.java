@@ -16,18 +16,19 @@ import java.util.Set;
 
 @Repository
 public class FilmDbStorage extends BaseDdStorage<Film> implements FilmStorage {
-    private static final String FIND_ALL_FILMS = "SELECT * FROM films AS f LEFT JOIN mpa AS m ON f.mpa = m.id";
-    private static final String FIND_FILM_BY_ID_QUERY = "SELECT * FROM films AS f INNER JOIN mpa AS m " +
-            "ON f.mpa_id = m.id AND id = ?";
-    private static final String INSERT_FILM_QUERY = "INSERT INTO films (name, description, releaseDate, duration, mpa_id)"
-            + " VALUES (?, ?, ?, ?, ?)";
+    private static final String FIND_ALL_FILMS = "SELECT * FROM films AS f LEFT JOIN mpa AS m ON f.mpa_id = m.id";
+    private static final String FIND_FILM_BY_ID_QUERY = "SELECT * FROM films AS f LEFT JOIN mpa " +
+            "ON f.mpa_id = mpa.id WHERE f.id = ?";
+    private static final String INSERT_FILM_QUERY = "INSERT INTO films (name, description, releaseDate, " +
+            "duration, mpa_id) VALUES (?, ?, ?, ?, ?)";
     private static final String UPDATE_QUERY = "UPDATE films SET name = ?, description = ?, releaseDate = ? "
-        + "duration = ?, WHERE id = ?";
+        + "duration = ?, mpa_id = ? WHERE id = ?";
     private static final String ADD_LIKE_FILM = "INSERT INTO likes (film_id, user_id) VALUES (?, ?)";
     private static final String DELETE_LIKE_ID = "DELETE FROM likes WHERE film_id = ? AND user_id = ?";
-    private static final String MOST_POPULAR_FILM = "SELECT * FROM films AS f LEFT JOIN mpa AS m " +
-            "ON f.mpa_id = m.id LEFT JOIN (SELECT film_id, COUNT(film_id) AS like " +
-            "FROM likes GROUP BY film_id) fl ON f.id=fl.film_id ORDER BY like DESC LIMIT ?";
+    private static final String MOST_POPULAR_FILM = "SELECT f.*, COUNT(DISTINCT l.user_id) AS like " +
+            "FROM films AS f LEFT JOIN mpa AS m ON f.mpa_id = m.id " +
+            "LEFT JOIN likes AS l ON f.id = l.film_id " +
+            "GROUP BY f.id ORDER BY like DESC LIMIT = ?";
     FilmValidator validator = new FilmValidator();
     GenreDdStorage genreDdStorage;
 
@@ -40,7 +41,7 @@ public class FilmDbStorage extends BaseDdStorage<Film> implements FilmStorage {
     @Override
     public Film createFilm(Film film) {
         validator.validate(film);
-        long id =  insert(
+        long id = insert(
                 INSERT_FILM_QUERY,
                 film.getName(),
                 film.getDescription(),
