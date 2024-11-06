@@ -6,7 +6,6 @@ import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.exception.ValidException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Genre;
-import ru.yandex.practicum.filmorate.model.Mpa;
 import ru.yandex.practicum.filmorate.storage.dal.FilmDbStorage;
 import ru.yandex.practicum.filmorate.storage.dal.GenreDdStorage;
 import ru.yandex.practicum.filmorate.storage.dal.MpaDdStorage;
@@ -48,17 +47,13 @@ public class FilmService {
     }
 
     public Film createFilm(Film film) {
+        if (film.getMpa() != null) {
+            mpaDdStorage.findMpaById(film.getMpa().getId()).orElseThrow(() ->
+                    new ValidException("Данный MPA не существует"));
+        }
         Film newFilm = filmDbStorage.createFilm(film);
         if (!newFilm.getGenres().isEmpty()) {
             createGenre(film);
-        }
-        List<Integer> mpaList = mpaDdStorage.listMpa().stream()
-                .map(Mpa::getId)
-                .toList();
-        if (film.getMpa() != null) {
-            if (!mpaList.contains(film.getMpa().getId())) {
-                throw new ValidException("Данный MPA не существует");
-            }
         }
         return newFilm;
     }
