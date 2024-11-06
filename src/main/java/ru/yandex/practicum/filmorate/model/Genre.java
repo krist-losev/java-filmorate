@@ -5,11 +5,8 @@ import lombok.Data;
 
 @Data
 @Builder
-public class User {
-
-    private Long id;
-    private String email;
-    private String login;
+public class Genre {
+    private int id;
     private String name;
-    private String birthday;
+
 }

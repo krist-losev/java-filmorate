@@ -1,7 +1,8 @@
 package ru.yandex.practicum.filmorate.controller;
 
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.service.FilmService;
@@ -10,10 +11,15 @@ import java.util.List;
 @RestController
 @RequestMapping("/films")
 @Slf4j
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class FilmController {
 
     private FilmService filmService;
+
+    @Autowired
+    public FilmController(FilmService filmService) {
+        this.filmService = filmService;
+    }
 
     /**
      * добавление фильма
@@ -53,7 +59,7 @@ public class FilmController {
      * @throws ru.yandex.practicum.filmorate.exception.NotFoundException при отсуствии данного фильма
      */
     @GetMapping("/{id}")
-    public Film findFilmById(@PathVariable int id) {
+    public Film findFilmById(@PathVariable long id) {
         return filmService.findFilmById(id);
     }
 
@@ -64,7 +70,7 @@ public class FilmController {
      * @throws ru.yandex.practicum.filmorate.exception.NotFoundException если фильм или пользователь не найдены
      */
     @PutMapping("/{id}/like/{userId}")
-    public void addLike(@PathVariable int id, @PathVariable int userId) {
+    public void addLike(@PathVariable long id, @PathVariable long userId) {
         filmService.addLike(id, userId);
     }
 
@@ -75,13 +81,12 @@ public class FilmController {
      * @throws ru.yandex.practicum.filmorate.exception.NotFoundException если фильм или пользователь не найдены
      */
     @DeleteMapping("{id}/like/{userId}")
-    public void deleteLike(@PathVariable int id, @PathVariable int userId) {
+    public void deleteLike(@PathVariable long id, @PathVariable long userId) {
         filmService.deleteLike(id, userId);
     }
 
     /**
      * вывод списка наиболее популярных фильмов по лайкам
-     * @param count - количество наиболее популярных фильмов
      * @return список популярных фильмов
      */
     @GetMapping("/popular")
